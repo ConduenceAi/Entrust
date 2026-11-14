@@ -5,6 +5,7 @@ const network = (env.VITE_NETWORK ?? "testnet") as "testnet" | "mainnet";
 
 export const config = {
   network,
+  waitlistContractId: (env.VITE_WAITLIST_CONTRACT_ID ?? "").trim(),
   rpcUrl: env.VITE_RPC_URL ?? NETWORKS[network],
   /**
    * "per-user" (default): each owner has their own registry on agents.<account>.
@@ -18,6 +19,8 @@ export const config = {
   policyGlobalCodeHash: env.VITE_POLICY_GLOBAL_CODE_HASH || undefined,
   policyWasmUrl: env.VITE_POLICY_WASM_URL ?? "/nearfirewall_account_policy.wasm",
   explorerUrl: env.VITE_EXPLORER_URL ?? (network === "mainnet" ? "https://nearblocks.io" : "https://testnet.nearblocks.io"),
+  /** Absolute path to packages/mcp/src/main.ts on this machine, so local MCP setups are ready to paste. */
+  mcpServerPath: (env.VITE_MCP_SERVER_PATH ?? "").trim(),
 };
 
 export const rpc = new NearRpc(config.rpcUrl);

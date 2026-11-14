@@ -7,7 +7,7 @@ import { useWorkspaceRegistry } from "../workspace-registry.tsx";
 import { ensureOk, near } from "../format.ts";
 import { href } from "../router.ts";
 import { useAction, useAsync } from "../hooks.ts";
-import { platforms, searchPlatforms, type AgentPlatform } from "../platforms.ts";
+import { claudeCodeCommand, localMcpConfig, platforms, searchPlatforms, type AgentPlatform } from "../platforms.ts";
 import { useWallet } from "../wallet.tsx";
 import { GatewaySetup } from "./GatewaySetup.tsx";
 
@@ -163,7 +163,8 @@ function ConnectionSetup({ accountId, secretKey, platform, onDone }: { accountId
   const [message, setMessage] = useState("");
   const [revealed, setRevealed] = useState(false);
   const env = { NEARFIREWALL_ACCOUNT: accountId, NEARFIREWALL_NETWORK: config.network, NEARFIREWALL_AGENT_KEY: secretKey };
-  const snippet = JSON.stringify({ mcpServers: { nearfirewall: { command: "node", args: ["/absolute/path/to/NEARFirewall/packages/mcp/src/main.ts"], env } } }, null, 2);
+  const snippet = localMcpConfig(platform, env, config.mcpServerPath);
+  const claudeCode = platform.id === "claude-code" ? claudeCodeCommand(env, config.mcpServerPath) : null;
   async function copy(value: string, label: string) {
     try {
       await navigator.clipboard.writeText(value);
@@ -192,12 +193,22 @@ function ConnectionSetup({ accountId, secretKey, platform, onDone }: { accountId
         <button type="button" onClick={download}>Download .env</button>
       </div>
       <h3>Set up {platform.name}</h3>
-      <ol>
-        <li>Install Node.js 24+ and run <code>npm ci</code> in the NEARFirewall checkout.</li>
-        <li>{platform.setup}</li>
-        <li>Replace the placeholder with the absolute path to <code>packages/mcp/src/main.ts</code>. If your client cannot find Node.js, use the absolute path to its executable.</li>
-        <li>Call <code>get_rules</code> to verify the connection before requesting a payment.</li>
-      </ol>
+      {claudeCode ? (
+        <ol>
+          <li>Install Node.js 24+ and run <code>npm ci</code> in the NEARFirewall checkout.</li>
+          <li>Copy the command below and run it once in a terminal. It adds this agent to Claude Code for your user. It contains the key, so clear it from your shell history afterwards.</li>
+          {!config.mcpServerPath && <li>Before running it, replace the placeholder with the absolute path to <code>packages/mcp/src/main.ts</code>.</li>}
+          <li>Start Claude Code, check the connection with <code>/mcp</code>, then ask: What can you spend?</li>
+        </ol>
+      ) : (
+        <ol>
+          <li>Install Node.js 24+ and run <code>npm ci</code> in the NEARFirewall checkout.</li>
+          <li>{platform.setup}</li>
+          {!config.mcpServerPath && <li>Replace the placeholder with the absolute path to <code>packages/mcp/src/main.ts</code>. If your client cannot find Node.js, use the absolute path to its executable.</li>}
+          <li>Call <code>get_rules</code> to verify the connection before requesting a payment.</li>
+        </ol>
+      )}
+      {claudeCode && <button type="button" className="primary" onClick={() => void copy(claudeCode, "Claude Code command")}>Copy Claude Code command</button>}
       <button type="button" onClick={() => void copy(snippet, "MCP configuration")}>Copy MCP configuration</button>
       <p role="status">{message}</p>
       <button className="primary" type="button" onClick={onDone}>I’ve saved it</button>

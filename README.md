@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/assets/banner.svg" alt="NEARFirewall: let agents pay, keep the keys. Spending rules for AI agents, enforced on-chain on NEAR." width="100%">
+</p>
+
 # NEARFirewall
 
 NEARFirewall lets AI agents pay vendors from an owner's existing NEAR account under rules enforced on-chain. The owner registers agents as NFTs, approves recipients and budgets, and gives each connection a restricted key. An agent can settle routine payments automatically while the owner reviews larger requests and can pause delegated spending or revoke a connection.
@@ -6,8 +10,21 @@ Built for [NEAR HACKATHON](https://nearhackathon.com/#tracks). The native NEAR p
 
 | Demo links | URL |
 | --- | --- |
-| Hosted dashboard | |
+| Hosted dashboard | [Open NEARFirewall](https://nearfirewall-nu.vercel.app/) |
+| Public Testnet agent registry | [Browse `nfw-registry-1112.testnet` on NearBlocks](https://testnet.nearblocks.io/address/nfw-registry-1112.testnet) |
 | Public demo post on X | |
+
+## The problem
+
+Today a company either signs every payment itself, so every team waits on one person, or hands an agent a wallet key that can spend everything. NEARFirewall gives each department's agent a key that can only ask. The policy on the company's own account decides each payment: approved payees are paid automatically, new payees wait for one owner approval, and anything else is refused before money moves.
+
+<p align="center">
+  <img src="docs/assets/company.svg" alt="One company wallet runs the payment policy. Engineering pays approved subscriptions, HR pays approved employees on weekly or monthly schedules, and a research agent buys from other agents in USDC. New payees need one owner approval." width="100%">
+</p>
+
+<p align="center">
+  <img src="docs/assets/flow.svg" alt="An agent such as Claude Code asks with a restricted key. The registry checks the agent, the policy on your account checks the payee and budgets, and the payment is paid, waits for the owner, or is refused on-chain." width="100%">
+</p>
 
 ## Hackathon tracks
 
@@ -37,6 +54,10 @@ npm run web:dev
 ### Live NEAR Testnet
 
 To inspect the original deployment without a wallet, open the [agent registry](https://testnet.nearblocks.io/address/nfw-registry-1112.testnet) and the [demo payer](https://testnet.nearblocks.io/address/nfw-alice-1112.testnet). The [deployment manifest](deployments/testnet.json) records their contract hashes.
+
+The Testnet registry is a public, on-chain example that anyone can inspect. The registry owner registers top-level agents. The dashboard defaults to one registry per wallet at `agents.<your-account>` so each owner can register their own agents.
+
+A common directory could list agents from those owner-controlled registries in one public contract. An owner would opt in by publishing the registry account and agent ID. Visitors could look up the agent in its original registry to see its current ownership and status. Spending permissions and budgets would stay on each payer's account.
 
 | Open this transaction | See this in the result or receipts |
 | --- | --- |
@@ -70,6 +91,27 @@ Copy these two build outputs into `apps/web/public/` before starting the dashboa
 | Request 2 NEAR and then 4.5 NEAR for the approved recipient. | The first payment settles. The second appears in the dashboard's **Ask me first** queue, where the owner can confirm or decline it. |
 
 For a signed Testnet walkthrough, the [Testnet runbook](docs/testnet-runbook.md#fresh-owner-registry-and-local-mcp) includes the CLI route used to verify local MCP over stdio. The runbook records dashboard testing with a mock wallet.
+
+### Company demo on Testnet
+
+One command prepares the company from the landing page on a CLI-controlled Testnet account:
+- **Engineering:** pays approved subscriptions.
+- **HR:** pays approved employees.
+- **Two payees left unapproved,** for the owner-approval moment.
+
+```sh
+npm run contracts:build
+node scripts/company-demo.ts setup --owner <company>.testnet --payees <payees>.testnet
+```
+
+| Do this | See this |
+| --- | --- |
+| In the dashboard, open **Agents**, choose **engineering**, choose **Connect**, then **Claude Code**. Sign the key in the wallet, copy the Claude Code command, and run it. | `/mcp` in Claude Code lists `nearfirewall`. |
+| In Claude Code, ask: "What can you spend?" | `get_rules` lists Newsliquid and Predixon, with their limits. |
+| Ask: "Pay this month's Newsliquid subscription, 0.5 NEAR to newsliquid.&lt;payees&gt;.testnet." | The payment settles from the company account with no owner signature. Activity shows it. |
+| Ask it to pay `quickdata.<payees>.testnet`, then approve QuickData under **Payments** and ask again. | It is refused with `RECIPIENT_NOT_APPROVED`, then paid after the owner's one approval. |
+
+Set `VITE_MCP_SERVER_PATH` in `apps/web/.env.local` to the absolute path of `packages/mcp/src/main.ts`. The Claude Code command is then ready to paste.
 
 ### x402 API payments
 
@@ -167,3 +209,13 @@ cargo test --workspace
 ### License
 
 NEARFirewall is released under the [MIT License](LICENSE). See the [third-party Edge notice](third-party/Edge-LICENSE) for its BSD 3-Clause terms.
+
+### Public waitlist
+
+Build the waitlist contract with:
+
+```sh
+cargo near build non-reproducible-wasm --no-abi --manifest-path contracts/waitlist/Cargo.toml
+```
+
+Deploy the resulting WASM to a dedicated NEAR account on the website's configured network. Set `VITE_WAITLIST_CONTRACT_ID` to that account and rebuild the web app. The contract starts empty and requires no separate initialization. Visitors sign from their wallet and attach 0.01 NEAR for storage. Each wallet can join once. The public list reads wallet IDs and their positions directly from the contract.

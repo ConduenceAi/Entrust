@@ -16,6 +16,7 @@ import { describeReason } from "./reasons.ts";
 import { loadAccessRules, type AccessRules } from "./access.ts";
 import type { Action, AgentRef, Connection, Mandate, Outcome, PathNode, X402Rules } from "./types.ts";
 import { formatUsdc, x402AccountFor } from "./x402.ts";
+import { parseSubscriptions, type Subscription } from "./subscriptions.ts";
 
 /** Gas for `agent_execute`: the registry check, the policy check, the transfer, and settlement. */
 export const AGENT_EXECUTE_GAS = 120n * TGAS;
@@ -67,6 +68,8 @@ export interface AgentRules {
   account: string;
   agentId: string;
   handle: string;
+  /** The agent's full name: its handle under the registry, such as `trading.agents.alice.testnet`. */
+  name?: string;
   connection: Connection;
   paused: boolean;
   agentStatus: string;
@@ -193,6 +196,7 @@ export class AgentConnection {
       account: this.account,
       agentId: agent.agent_id,
       handle: agent.handle,
+      name: `${agent.handle}.${registry.registryId}`,
       connection,
       paused: policyView.paused,
       agentStatus: agent.status.state,
@@ -202,6 +206,13 @@ export class AgentConnection {
       availableBalance: policyView.available_balance,
       blocked: approved.filter((r) => blocklist.has(r)),
     };
+  }
+
+  /** Subscriptions the owner recorded on this agent, soonest renewal first. */
+  async subscriptions(today = new Date()): Promise<Subscription[]> {
+    const connection = await this.connection();
+    const registry = await this.registry();
+    return parseSubscriptions(await registry.getRecords(connection.agent_id), today);
   }
 
   /** The owner's browsing rules for this agent: its own and those of every agent above it. */

@@ -8,6 +8,7 @@ import { z } from "zod";
 import {
   checkUrl,
   describeReason,
+  describeSubscription,
   formatNear,
   formatUsdc,
   isX402,
@@ -84,7 +85,7 @@ export function toolHandlers(connection: AgentConnection, options: ServerOptions
     async get_rules(): Promise<ToolResult> {
       const r = await connection.rules();
       const lines = [
-        `Agent ${r.handle} (#${r.agentId}) on ${r.account}, connected as "${r.connection.label}".`,
+        `Agent ${r.name ?? r.handle} (#${r.agentId}) on ${r.account}, connected as "${r.connection.label}".`,
         r.paused ? "Payments are PAUSED by the owner. Every payment will be blocked." : "Payments are on.",
         r.agentStatus !== "active" ? `The agent is ${r.agentStatus}.` : "",
         r.maxPerPayment === null
@@ -135,6 +136,29 @@ export function toolHandlers(connection: AgentConnection, options: ServerOptions
       if (!options.x402) return text("x402 payments are not set up in this server.", true);
       const { amount, txHash } = await options.x402.returnUnspent();
       return text(amount === 0n ? "The payment account holds no USDC." : `Returned ${formatUsdc(amount)} USDC to the owner (transaction ${txHash}).`);
+    },
+
+    async get_subscriptions(): Promise<ToolResult> {
+      const [subscriptions, rules] = await Promise.all([connection.subscriptions(), connection.rules()]);
+      const today = new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric", timeZone: "UTC" });
+      if (subscriptions.length === 0) return text(`Today is ${today} (UTC). The owner has not recorded any subscriptions for this agent.`);
+      const approved = new Map(rules.recipients.map((p) => [p.recipient, p]));
+      const lines = subscriptions.map((s) => {
+        const rule = approved.get(s.payTo);
+        const status = !rule
+          ? "its payee is not approved yet, so paying it is refused until the owner approves it"
+          : s.price <= rule.perPayment
+            ? "its payee is approved for this amount"
+            : `its payee is approved only up to ${formatNear(rule.perPayment)} NEAR per payment`;
+        return `- ${describeSubscription(s)}${s.url ? ` (${s.url})` : ""}; ${status}.`;
+      });
+      return text(
+        [
+          `Today is ${today} (UTC). Subscriptions for ${rules.name ?? rules.handle}, soonest first:`,
+          ...lines,
+          "To renew one, pay its price to its payee with pay. The owner's on-chain rules still decide.",
+        ].join("\n"),
+      );
     },
 
     async preview_payment({ recipient, amount_near }: { recipient: string; amount_near: string }): Promise<ToolResult> {
@@ -228,6 +252,16 @@ export function createServer(connection: AgentConnection, options: ServerOptions
       annotations: { readOnlyHint: true },
     },
     withClient(async () => handlers.get_rules()),
+  );
+  server.registerTool(
+    "get_subscriptions",
+    {
+      title: "When do subscriptions renew?",
+      description:
+        "Lists this agent's subscriptions with the exact next renewal date, price, and who to pay, as the owner recorded them, and whether each payee is approved. Use it when asked what to renew or when.",
+      annotations: { readOnlyHint: true },
+    },
+    withClient(async () => handlers.get_subscriptions()),
   );
   server.registerTool(
     "preview_payment",

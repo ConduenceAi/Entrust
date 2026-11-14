@@ -89,6 +89,8 @@ function AgentCard({
         {(agent.locks & LOCKS.NO_CAPABILITY_RAISE) !== 0 && <span className="badge">capabilities frozen</span>}
       </div>
       <dl className="facts">
+        <dt>Name</dt>
+        <dd><code>{agent.handle}.{reg}</code></dd>
         <dt>Executor</dt>
         <dd>
           {agent.executor ? <a href={explorerAccount(agent.executor)} target="_blank" rel="noreferrer">

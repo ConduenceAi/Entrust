@@ -230,7 +230,7 @@ describe("gateway: remote MCP", () => {
     const { base, connection } = await start();
     const client = await mcpClient(`${base}/mcp/${TOKEN}`);
     const { tools } = await client.listTools();
-    expect(tools.map((t) => t.name).sort()).toEqual(["check_payment", "fetch_url", "get_rules", "list_activity", "pay", "preview_payment"]);
+    expect(tools.map((t) => t.name).sort()).toEqual(["check_payment", "fetch_url", "get_rules", "get_subscriptions", "list_activity", "pay", "preview_payment"]);
     expect(text(await client.callTool({ name: "get_rules", arguments: {} }))).toContain("Agent trader");
     const paid = await client.callTool({ name: "pay", arguments: { recipient: "vendor.testnet", amount_near: "2" } });
     expect(paid.isError).toBeFalsy();

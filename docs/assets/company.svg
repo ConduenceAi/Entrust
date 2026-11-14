@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="640" viewBox="0 0 1200 640" role="img" aria-labelledby="t d">
+  <title id="t">One company wallet, many departments</title>
+  <desc id="d">A company wallet runs the payment policy. Engineering pays approved subscriptions, HR pays approved employees on weekly or monthly schedules, and a research agent buys from other agents in USDC. New payees need one owner approval; everything else is refused on-chain.</desc>
+  <rect width="1200" height="640" rx="24" fill="#11150f"/>
+  <g font-family="system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif">
+    <text x="60" y="72" font-size="34" font-weight="800" fill="#f2f5ee" letter-spacing="-0.8">One company wallet. Many departments.</text>
+    <text x="60" y="106" font-size="18" fill="#9aa394">Each department's agent pays only within the owner's rules, and the chain enforces them.</text>
+
+    <!-- Wallet -->
+    <rect x="440" y="136" width="320" height="84" rx="16" fill="#1b2217" stroke="#c7f96f" stroke-width="2"/>
+    <text x="600" y="172" font-size="21" font-weight="700" fill="#f2f5ee" text-anchor="middle">Company wallet</text>
+    <text x="600" y="200" font-size="15" fill="#9aa394" text-anchor="middle">company.near · runs the payment policy</text>
+
+    <!-- Connectors -->
+    <g fill="none" stroke="#3b4a33" stroke-width="2.5">
+      <path d="M600 220 V252"/>
+      <path d="M220 252 H980"/>
+      <path d="M220 252 V282"/>
+      <path d="M600 252 V282"/>
+      <path d="M980 252 V282"/>
+    </g>
+
+    <!-- Engineering -->
+    <rect x="60" y="282" width="320" height="252" rx="16" fill="#171c14" stroke="#2a3324"/>
+    <text x="84" y="324" font-size="21" font-weight="700" fill="#f2f5ee">Engineering</text>
+    <text x="84" y="350" font-size="15" fill="#9aa394">Subscriptions</text>
+    <g font-size="15" fill="#e6ecdf">
+      <circle cx="92" cy="388" r="6" fill="#8fd14f"/><text x="108" y="393">Newsliquid · 0.5 a month</text>
+      <circle cx="92" cy="424" r="6" fill="#8fd14f"/><text x="108" y="429">Predixon · 0.8 a month</text>
+      <circle cx="92" cy="460" r="6" fill="#e5b84a"/><text x="108" y="465">New vendor → owner approves once</text>
+    </g>
+    <text x="84" y="510" font-size="14" fill="#8fd14f" font-weight="700">Renewals: no owner signature</text>
+
+    <!-- HR -->
+    <rect x="440" y="282" width="320" height="252" rx="16" fill="#171c14" stroke="#2a3324"/>
+    <text x="464" y="324" font-size="21" font-weight="700" fill="#f2f5ee">HR</text>
+    <text x="464" y="350" font-size="15" fill="#9aa394">Payroll by role and schedule</text>
+    <g font-size="15" fill="#e6ecdf">
+      <circle cx="472" cy="388" r="6" fill="#8fd14f"/><text x="488" y="393">Maya · contractor · weekly</text>
+      <circle cx="472" cy="424" r="6" fill="#8fd14f"/><text x="488" y="429">Alex · engineer · monthly</text>
+      <circle cx="472" cy="460" r="6" fill="#e5b84a"/><text x="488" y="465">New hire → owner approves once</text>
+    </g>
+    <text x="464" y="510" font-size="14" fill="#8fd14f" font-weight="700">Payroll: no owner signature</text>
+
+    <!-- Research -->
+    <rect x="820" y="282" width="320" height="252" rx="16" fill="#171c14" stroke="#2a3324"/>
+    <text x="844" y="324" font-size="21" font-weight="700" fill="#f2f5ee">Research agent</text>
+    <text x="844" y="350" font-size="15" fill="#9aa394">Buys from other agents (x402, USDC)</text>
+    <g font-size="15" fill="#e6ecdf">
+      <circle cx="852" cy="388" r="6" fill="#8fd14f"/><text x="868" y="393">Approved agent · by its NFT</text>
+      <circle cx="852" cy="424" r="6" fill="#9aa394"/><text x="868" y="429">Unknown sellers · small allowance</text>
+      <circle cx="852" cy="460" r="6" fill="#e0715f"/><text x="868" y="465">Over the cap → refused</text>
+    </g>
+    <text x="844" y="510" font-size="14" fill="#8fd14f" font-weight="700">Checked on-chain before paying</text>
+
+    <text x="600" y="590" font-size="16" fill="#9aa394" text-anchor="middle">Approved payments flow without the owner. New payees wait for one approval. Anything else is refused before money moves.</text>
+  </g>
+</svg>

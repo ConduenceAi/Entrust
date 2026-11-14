@@ -59,7 +59,8 @@ export const platforms: AgentPlatform[] = [
     ] },
   },
   { id: "copilot-studio", name: "Microsoft Copilot Studio", type: "Chat assistants", initials: "CS" },
-  { id: "vscode", name: "VS Code", type: "Coding agents", initials: "VS", aliases: "copilot" },
+  { id: "codex", name: "Codex", type: "Coding agents", initials: "CX", aliases: "openai local mcp", setup: "Add the TOML entry to ~/.codex/config.toml and start a new Codex session." },
+  { id: "vscode", name: "VS Code", type: "Coding agents", initials: "VS", aliases: "copilot", setup: "Open MCP: Open User Configuration from the Command Palette and merge the servers entry. Start the server in VS Code." },
   { id: "windsurf", name: "Windsurf", type: "Coding agents", initials: "WS" },
   {
     id: "zapier", name: "Zapier", type: "Workflow automation", initials: "ZA", aliases: "http webhook gateway",
@@ -83,6 +84,48 @@ export const platforms: AgentPlatform[] = [
   { id: "near-ai", name: "NEAR AI agents", type: "Web3 agent kits", initials: "NA" },
   { id: "custom", name: "Custom local MCP client", type: "Custom", initials: "<>", aliases: "sdk stdio", setup: "Configure your client to launch the local MCP server over stdio with this command, argument and environment." },
 ];
+
+const featuredIcons: Record<string, string> = {
+  "claude-desktop": "claude.svg",
+  "claude-code": "claude-code.svg",
+  cursor: "cursor.svg",
+  codex: "codex.svg",
+  vscode: "vscode.png",
+};
+
+export const featuredPlatforms = platforms.filter(({ id }) =>
+  ["claude-desktop", "claude-code", "cursor", "codex", "vscode"].includes(id)
+).map((platform) => ({ ...platform, icon: featuredIcons[platform.id] }));
+
+const SERVER_PLACEHOLDER = "/absolute/path/to/NEARFirewall/packages/mcp/src/main.ts";
+
+/**
+ * One terminal command that adds the MCP server to Claude Code for the current
+ * user. It holds the key, so it is shown only once, like the key itself.
+ */
+export function claudeCodeCommand(env: Record<string, string>, serverPath = "") {
+  const vars = Object.entries(env).map(([key, value]) => `-e ${key}=${value}`).join(" ");
+  return `claude mcp add nearfirewall --scope user ${vars} -- node "${serverPath || SERVER_PLACEHOLDER}"`;
+}
+
+export function localMcpConfig(platform: AgentPlatform, env: Record<string, string>, serverPath = "") {
+  const command = "node";
+  const args = [serverPath || SERVER_PLACEHOLDER];
+  if (platform.id === "codex") {
+    return [
+      "[mcp_servers.nearfirewall]",
+      "command = " + JSON.stringify(command),
+      "args = " + JSON.stringify(args),
+      "",
+      "[mcp_servers.nearfirewall.env]",
+      ...Object.entries(env).map(([key, value]) => key + " = " + JSON.stringify(value)),
+    ].join("\n");
+  }
+  if (platform.id === "vscode") {
+    return JSON.stringify({ servers: { nearfirewall: { type: "stdio", command, args, env } } }, null, 2);
+  }
+  return JSON.stringify({ mcpServers: { nearfirewall: { command, args, env } } }, null, 2);
+}
 
 export function searchPlatforms(query: string): AgentPlatform[] {
   const words = query.toLowerCase().trim().split(/\s+/);

@@ -9,3 +9,4 @@ export * from "./access.ts";
 export * from "./reasons.ts";
 export * from "./manifest.ts";
 export * from "./x402.ts";
+export * from "./subscriptions.ts";

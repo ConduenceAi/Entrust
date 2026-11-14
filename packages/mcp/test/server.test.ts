@@ -65,7 +65,7 @@ describe("NEARFirewall MCP server", () => {
   it("offers the agent tools, none of which take a key", async () => {
     const client = await connect(fakeConnection());
     const { tools } = await client.listTools();
-    expect(tools.map((t) => t.name).sort()).toEqual(["check_payment", "fetch_url", "get_rules", "list_activity", "pay", "preview_payment"]);
+    expect(tools.map((t) => t.name).sort()).toEqual(["check_payment", "fetch_url", "get_rules", "get_subscriptions", "list_activity", "pay", "preview_payment"]);
     for (const tool of tools) {
       expect(JSON.stringify(tool.inputSchema)).not.toMatch(/key|secret|private/i);
     }
@@ -165,6 +165,20 @@ describe("NEARFirewall MCP server", () => {
     await client.callTool({ name: "fetch_url", arguments: { url: "https://docs.near.org/" } });
     expect(check!(new URL("https://docs.near.org/other")).allowed).toBe(true);
     expect(check!(new URL("https://elsewhere.com/")).allowed).toBe(false);
+  });
+
+  it("tells the agent when each subscription renews and whether its payee is approved", async () => {
+    const connection = fakeConnection();
+    const day = (n: number) => new Date(Date.UTC(2026, 10, 14 + n));
+    (connection as any).subscriptions = async () => [
+      { id: "newsliquid", name: "Newsliquid", url: "https://app.newsliquid.com/", price: parseNear("0.5"), period: "monthly", payTo: "vendor.testnet", nextRenewal: day(1), daysUntil: 1 },
+      { id: "quickdata", name: "QuickData", price: parseNear("0.3"), period: "monthly", payTo: "quickdata.testnet", nextRenewal: day(8), daysUntil: 8 },
+    ];
+    const client = await connect(connection);
+    const t = textOf(await client.callTool({ name: "get_subscriptions", arguments: {} }));
+    expect(t).toContain("Newsliquid: 0.5 NEAR monthly, next renewal Sunday, November 15, 2026 (tomorrow), paid to vendor.testnet (https://app.newsliquid.com/); its payee is approved for this amount.");
+    expect(t).toContain("QuickData: 0.3 NEAR monthly, next renewal Sunday, November 22, 2026 (in 8 days)");
+    expect(t).toContain("its payee is not approved yet");
   });
 
   it("rejects malformed amounts at the schema", async () => {

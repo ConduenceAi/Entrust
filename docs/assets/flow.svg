@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="330" viewBox="0 0 1200 330" role="img" aria-labelledby="t d">
+  <title id="t">How an agent's payment is decided</title>
+  <desc id="d">An agent such as Claude Code asks to pay with a restricted key. The registry checks the agent and its branch, the policy on the owner's account checks the payee and the limits, and the payment is paid, waits for the owner, or is refused before any money moves.</desc>
+  <rect width="1200" height="330" rx="24" fill="#11150f"/>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 Z" fill="#5b6d4f"/>
+    </marker>
+  </defs>
+  <g font-family="system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif">
+    <text x="48" y="58" font-size="26" font-weight="800" fill="#f2f5ee" letter-spacing="-0.5">The agent asks. Your account decides.</text>
+
+    <g fill="none" stroke="#5b6d4f" stroke-width="2.5" marker-end="url(#arrow)">
+      <path d="M228 185 H262"/>
+      <path d="M458 185 H492"/>
+      <path d="M688 185 H722"/>
+      <path d="M918 185 L952 125"/>
+      <path d="M918 185 H952"/>
+      <path d="M918 185 L952 245"/>
+    </g>
+
+    <rect x="48" y="122" width="180" height="126" rx="14" fill="#171c14" stroke="#2a3324"/>
+    <text x="138" y="170" font-size="18" font-weight="700" fill="#f2f5ee" text-anchor="middle">Claude Code</text>
+    <text x="138" y="196" font-size="14" fill="#9aa394" text-anchor="middle">or any MCP agent</text>
+    <text x="138" y="218" font-size="14" fill="#9aa394" text-anchor="middle">"Pay Newsliquid"</text>
+
+    <rect x="266" y="122" width="192" height="126" rx="14" fill="#171c14" stroke="#2a3324"/>
+    <text x="362" y="164" font-size="18" font-weight="700" fill="#f2f5ee" text-anchor="middle">Restricted key</text>
+    <text x="362" y="190" font-size="14" fill="#9aa394" text-anchor="middle">can only ask the policy</text>
+    <text x="362" y="212" font-size="14" fill="#9aa394" text-anchor="middle">cannot move funds itself</text>
+
+    <rect x="496" y="122" width="192" height="126" rx="14" fill="#171c14" stroke="#2a3324"/>
+    <text x="592" y="164" font-size="18" font-weight="700" fill="#f2f5ee" text-anchor="middle">Registry</text>
+    <text x="592" y="190" font-size="14" fill="#9aa394" text-anchor="middle">agent NFT, branch,</text>
+    <text x="592" y="212" font-size="14" fill="#9aa394" text-anchor="middle">pause, per-payment cap</text>
+
+    <rect x="726" y="122" width="192" height="126" rx="14" fill="#1b2217" stroke="#c7f96f" stroke-width="2"/>
+    <text x="822" y="164" font-size="18" font-weight="700" fill="#f2f5ee" text-anchor="middle">Your policy</text>
+    <text x="822" y="190" font-size="14" fill="#9aa394" text-anchor="middle">on your own account:</text>
+    <text x="822" y="212" font-size="14" fill="#9aa394" text-anchor="middle">payee and daily budgets</text>
+
+    <g font-size="15" font-weight="700">
+      <rect x="956" y="100" width="200" height="50" rx="12" fill="#1f2b17"/>
+      <circle cx="980" cy="125" r="7" fill="#8fd14f"/>
+      <text x="996" y="130" fill="#8fd14f">Paid</text>
+      <rect x="956" y="160" width="200" height="50" rx="12" fill="#2a2614"/>
+      <circle cx="980" cy="185" r="7" fill="#e5b84a"/>
+      <text x="996" y="190" fill="#e5b84a">Waits for owner</text>
+      <rect x="956" y="220" width="200" height="50" rx="12" fill="#2c1714"/>
+      <circle cx="980" cy="245" r="7" fill="#e0715f"/>
+      <text x="996" y="250" fill="#e0715f">Refused on-chain</text>
+    </g>
+  </g>
+</svg>

@@ -1,26 +1,69 @@
 import { ArrowDown, ArrowRight, Code2, KeyRound, Users, Wallet } from "lucide-react";
+import { PaymentFeatureCards } from "../components/PaymentFeatureCards.tsx";
 import { PaymentDemo } from "../components/PaymentDemo.tsx";
-import { Topbar } from "../components/Topbar.tsx";
+import { PaymentPolicyPreview } from "../components/PaymentPolicyPreview.tsx";
+import { WalletEntry } from "../components/WalletEntry.tsx";
+import { config } from "../config.ts";
+import { Brand } from "../components/Brand.tsx";
+import { WaitlistFooter } from "../components/WaitlistFooter.tsx";
 import { href } from "../router.ts";
+import { featuredPlatforms } from "../platforms.ts";
 
 export function Landing() {
   return (
     <div className="landing">
-      <Topbar />
       <main>
-        <section className="hero company-hero" aria-labelledby="hero-title">
+        <section className="hero" aria-labelledby="hero-title">
           <div className="hero-art" aria-hidden="true" />
+          <header className="header-inner landing-hero-header">
+            <Brand />
+            <div className="top-actions">
+              <WalletEntry placement="header" />
+            </div>
+          </header>
           <div className="hero-inner">
             <div className="hero-copy">
+              <div className="hero-eyebrow">
+                <span>On-chain spending controls</span>
+                <span className="hero-network"><i aria-hidden="true" />{config.network}</span>
+              </div>
               <h1 id="hero-title">Let agents pay.<br /><span>Keep the keys.</span></h1>
-              <p className="lead">When agents handle subscriptions and payroll, signing every payment slows the team down. Giving them full wallet access puts more money in reach than the job requires.</p>
+              <p className="lead">Give agents a budget from your existing NEAR account. You choose who they can pay and how much. NEARFirewall enforces the rules on-chain.</p>
               <div className="cta-row">
-                <a className="primary text-link" href="#payment-walkthrough">Try it <ArrowDown size={16} aria-hidden="true" /></a>
-                <a className="text-link" href={href("/docs")}>Read the docs <ArrowRight size={15} aria-hidden="true" /></a>
+                <WalletEntry placement="landing" />
+                <a className="text-link" href={href("/docs")}>Read the docs <ArrowRight size={15} /></a>
               </div>
             </div>
 
-            <figure className="company-map" aria-label="One company wallet delegates payments to two departments">
+            <PaymentPolicyPreview />
+
+            <a className="hero-guide text-link" href="#payment-walkthrough"><ArrowDown size={15} /> Try it here</a>
+          </div>
+          <div className="landing-compatible" aria-label="Compatible with these local MCP clients">
+            <span>Works with</span>
+            <ul>
+              {featuredPlatforms.map((platform) => (
+                <li key={platform.id}>
+                  {platform.icon && <img className="integration-icon" data-client={platform.id} src={"/integrations/" + platform.icon} width={21} height={21} alt="" />}
+                  {platform.name}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+
+        <PaymentDemo />
+        <section className="landing-section department-section" id="how-it-works" aria-labelledby="departments-title">
+          <header className="section-intro">
+            <h2 id="departments-title">Who can agents pay from your wallet?</h2>
+            <p className="lead">Signing every subscription and paycheck slows teams down. With one NEAR wallet and a restricted key per agent, the owner can delegate routine payments and review new payees.</p>
+          </header>
+          <ol className="problem-strip" aria-label="Three ways to let agents pay">
+            <li data-tone="bad"><strong>The owner signs everything</strong><span>Every team waits on one person.</span></li>
+            <li data-tone="bad"><strong>The agent holds the wallet key</strong><span>One bad prompt can spend it all.</span></li>
+            <li data-tone="good"><strong>NEARFirewall</strong><span>Agents pay within your rules. The chain enforces them.</span></li>
+          </ol>
+          <figure className="company-map" aria-label="One company wallet delegates payments to two departments">
               <div className="company-wallet">
                 <Wallet size={21} aria-hidden="true" />
                 <div><strong>Company wallet</strong><code>company.near</code></div>
@@ -31,30 +74,11 @@ export function Landing() {
               </div>
               <figcaption><KeyRound size={15} aria-hidden="true" /> Each agent gets a restricted key.</figcaption>
             </figure>
-          </div>
+          <PaymentFeatureCards />
         </section>
 
-        <section className="landing-section department-section" id="how-it-works" aria-labelledby="departments-title">
-          <header className="section-intro">
-            <h2 id="departments-title">One wallet. Two sets of rules.</h2>
-            <p className="lead">Keep your existing NEAR account. Set spending limits by department and verify delegated payments on-chain.</p>
-          </header>
-          <div className="department-grid">
-            <article>
-              <Code2 size={24} aria-hidden="true" />
-              <h3>Engineering renews subscriptions</h3>
-              <p>The agent pays approved vendors within their limits. The owner steps in when a new vendor needs approval.</p>
-            </article>
-            <article>
-              <Users size={24} aria-hidden="true" />
-              <h3>HR runs payroll</h3>
-              <p>Each role has a rate and a weekly or monthly schedule. The owner approves new employees once, then HR can run their scheduled payments.</p>
-            </article>
-          </div>
-        </section>
-
-        <PaymentDemo />
       </main>
+      <WaitlistFooter />
     </div>
   );
 }

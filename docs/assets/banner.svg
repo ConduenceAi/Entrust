@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="320" viewBox="0 0 1200 320" role="img" aria-labelledby="t d">
+  <title id="t">NEARFirewall</title>
+  <desc id="d">Let agents pay. Keep the keys. Spending rules for AI agents, enforced on-chain on NEAR.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0f130d"/>
+      <stop offset="1" stop-color="#1a2214"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="320" rx="24" fill="url(#bg)"/>
+  <g font-family="system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif">
+    <!-- Shield -->
+    <path d="M84 70 L134 52 L184 70 V128 C184 168 158 194 134 206 C110 194 84 168 84 128 Z" fill="none" stroke="#c7f96f" stroke-width="7" stroke-linejoin="round"/>
+    <path d="M112 128 L128 144 L158 110" fill="none" stroke="#c7f96f" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="220" y="118" font-size="62" font-weight="800" fill="#f2f5ee" letter-spacing="-1.5">NEARFirewall</text>
+    <text x="222" y="168" font-size="30" font-weight="700" fill="#c7f96f">Let agents pay. Keep the keys.</text>
+    <text x="222" y="206" font-size="19" fill="#a3ad9c">Spending rules for AI agents, enforced on-chain on NEAR.</text>
+    <text x="222" y="236" font-size="19" fill="#a3ad9c">Subscriptions, payroll, and agent-to-agent purchases in USDC.</text>
+
+    <!-- Outcomes card -->
+    <rect x="800" y="56" width="350" height="208" rx="16" fill="#151b12" stroke="#2c3826"/>
+    <text x="824" y="90" font-size="15" font-weight="700" fill="#f2f5ee">engineering · asks to pay</text>
+    <g font-size="15">
+      <rect x="822" y="108" width="306" height="40" rx="10" fill="#1f2b17"/>
+      <circle cx="844" cy="128" r="6" fill="#8fd14f"/>
+      <text x="860" y="133" fill="#e6ecdf">Newsliquid · 0.5</text>
+      <text x="1112" y="133" fill="#8fd14f" text-anchor="end" font-weight="700">Paid</text>
+      <rect x="822" y="156" width="306" height="40" rx="10" fill="#2a2614"/>
+      <circle cx="844" cy="176" r="6" fill="#e5b84a"/>
+      <text x="860" y="181" fill="#e6ecdf">New vendor · 0.3</text>
+      <text x="1112" y="181" fill="#e5b84a" text-anchor="end" font-weight="700">Owner approves</text>
+      <rect x="822" y="204" width="306" height="40" rx="10" fill="#2c1714"/>
+      <circle cx="844" cy="224" r="6" fill="#e0715f"/>
+      <text x="860" y="229" fill="#e6ecdf">Unknown · 5</text>
+      <text x="1112" y="229" fill="#e0715f" text-anchor="end" font-weight="700">Refused</text>
+    </g>
+  </g>
+</svg>

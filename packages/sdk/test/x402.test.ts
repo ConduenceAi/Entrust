@@ -34,6 +34,12 @@ import {
   upgradePolicyCode,
   upgradePolicyWithSetupKey,
   upgradeRegistryCode,
+  anchorFor,
+  describeSubscription,
+  nextRenewal,
+  parseNear,
+  parseSubscriptions,
+  subscriptionRecord,
 } from "../src/index.ts";
 
 const argsOf = (tx: { actions: { type: string; params?: unknown }[] }, i = 0) =>
@@ -243,5 +249,33 @@ describe("installing code without a deployment in the wallet", () => {
     expect(await checkRegistry(rpc(true), "agents.alice.testnet", "alice.testnet", "NewHash")).toEqual({ kind: "outdated", codeHash: "OldHash", upgradable: true });
     expect(await checkRegistry(rpc(false), "agents.alice.testnet", "alice.testnet", "NewHash")).toEqual({ kind: "outdated", codeHash: "OldHash", upgradable: false });
     expect(await checkRegistry(rpc(true), "agents.alice.testnet", "mallory.testnet", "NewHash")).toMatchObject({ kind: "untrusted" });
+  });
+});
+
+describe("subscription renewals", () => {
+  const today = new Date(Date.UTC(2026, 10, 14, 15, 30)); // Nov 14, 2026, mid-afternoon UTC
+
+  it("finds the next monthly or weekly renewal from an anchor", () => {
+    expect(nextRenewal("2026-10-15", "monthly", today).toISOString().slice(0, 10)).toBe("2026-11-15");
+    expect(nextRenewal("2026-11-14", "monthly", today).toISOString().slice(0, 10)).toBe("2026-11-14");
+    expect(nextRenewal("2026-01-31", "monthly", today).toISOString().slice(0, 10)).toBe("2026-11-30");
+    expect(nextRenewal("2026-11-01", "weekly", today).toISOString().slice(0, 10)).toBe("2026-11-15");
+    expect(nextRenewal("2026-12-01", "monthly", today).toISOString().slice(0, 10)).toBe("2026-12-01");
+  });
+
+  it("anchors a subscription so it renews a given number of days from today", () => {
+    expect(nextRenewal(anchorFor(1, "monthly", today), "monthly", today).toISOString().slice(0, 10)).toBe("2026-11-15");
+    expect(nextRenewal(anchorFor(8, "monthly", today), "monthly", today).toISOString().slice(0, 10)).toBe("2026-11-22");
+    expect(nextRenewal(anchorFor(3, "weekly", today), "weekly", today).toISOString().slice(0, 10)).toBe("2026-11-17");
+  });
+
+  it("reads subscription records, soonest first, and skips anything malformed", () => {
+    const a = subscriptionRecord("predexon", { name: "Predexon", price_near: "0.8", period: "monthly", anchor: anchorFor(8, "monthly", today), pay_to: "coldarena9661.testnet" });
+    const b = subscriptionRecord("newsliquid", { name: "Newsliquid", url: "https://app.newsliquid.com/", price_near: "0.5", period: "monthly", anchor: anchorFor(1, "monthly", today), pay_to: "coldarena9661.testnet" });
+    const subs = parseSubscriptions([a, b, { key: "subscriptions.broken", value: "{" }, { key: "profile.description", value: "x" }], today);
+    expect(subs.map((s) => [s.id, s.daysUntil])).toEqual([["newsliquid", 1], ["predexon", 8]]);
+    expect(subs[0]!.price).toBe(parseNear("0.5"));
+    expect(describeSubscription(subs[0]!)).toBe("Newsliquid: 0.5 NEAR monthly, next renewal Sunday, November 15, 2026 (tomorrow), paid to coldarena9661.testnet");
+    expect(() => subscriptionRecord("Bad Id", { name: "x", price_near: "1", period: "monthly", anchor: "2026-01-01", pay_to: "a.testnet" })).toThrow();
   });
 });

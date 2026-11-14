@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["contracts/types", "contracts/registry", "contracts/account-policy"]
+members = ["contracts/types", "contracts/registry", "contracts/account-policy", "contracts/waitlist"]
 
 [workspace.package]
 version = "0.1.0"
