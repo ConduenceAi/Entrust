@@ -97,6 +97,8 @@ export const featuredPlatforms = platforms.filter(({ id }) =>
   ["claude-desktop", "claude-code", "cursor", "codex", "vscode"].includes(id)
 ).map((platform) => ({ ...platform, icon: featuredIcons[platform.id] }));
 
+export const defaultPlatform = featuredPlatforms[0]!;
+
 const SERVER_PLACEHOLDER = "/absolute/path/to/NEARFirewall/packages/mcp/src/main.ts";
 
 /**

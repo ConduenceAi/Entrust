@@ -71,7 +71,7 @@ export function ActivityPanel() {
     const agents = await registry.agentsOf(accountId);
     const handles = new Map(agents.map((a) => [a.agent_id, a.handle]));
     const routed = await Promise.all(
-      agents.map(async (a) => (await registry.getActivity(a.agent_id)).map((entry) => ({ agent: a.handle, ...entry }))),
+      agents.map(async (a) => (await registry.getActivity(a.agent_id)).map((entry) => ({ agent: a.handle, agent_id: a.agent_id, ...entry }))),
     );
 
     const entries: Entry[] = payments.map((p) => ({

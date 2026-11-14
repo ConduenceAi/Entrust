@@ -35,7 +35,7 @@ function PaymentFeatureCard({ feature }: { feature: typeof FEATURES[number] }) {
   const [step, setStep] = useState(0);
   const [manual, setManual] = useState(false);
   const [paused, setPaused] = useState(false);
-  const current = feature.steps[step];
+  const current = feature.steps[step] ?? feature.steps[0]!;
   const Icon = current.icon;
 
   useEffect(() => {

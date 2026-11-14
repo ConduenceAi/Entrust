@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { ArrowRight, Code2, KeyRound, RotateCcw, ShieldAlert, Users } from "lucide-react";
 import { href } from "../router.ts";
-import { featuredPlatforms, localMcpConfig } from "../platforms.ts";
+import { defaultPlatform, featuredPlatforms, localMcpConfig } from "../platforms.ts";
 
 const DAY = 86_400_000;
 const START = Date.UTC(2026, 5, 1);
@@ -61,7 +61,7 @@ export function PaymentDemo() {
   const [walletError, setWalletError] = useState("");
   const [role, setRole] = useState<Role>("Contractor");
   const [message, setMessage] = useState("");
-  const [client, setClient] = useState(featuredPlatforms[0]);
+  const [client, setClient] = useState(defaultPlatform);
   const [connection, setConnection] = useState<"setup" | "authorize" | "connected">("setup");
   const isHR = department === "hr";
   const agent = department + ".company.near";
@@ -142,7 +142,7 @@ export function PaymentDemo() {
     setPayments([]);
     setRole("Contractor");
     setConnection("setup");
-    setClient(featuredPlatforms[0]);
+    setClient(defaultPlatform);
   }
 
   return (
