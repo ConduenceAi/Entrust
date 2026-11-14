@@ -2762,16 +2762,30 @@ fn only_the_owner_upgrades_the_policy() {
 #[test]
 fn web4_serves_the_app_from_its_static_url() {
     set_env(alice(), 0, T0, 100);
-    let empty = AccountPolicy::web4_get(Web4Request { path: "/".to_string() });
+    let empty = AccountPolicy::web4_get(Web4Request {
+        path: "/".to_string(),
+    });
     assert_eq!(empty.status, Some(404));
     assert!(empty.body_url.is_none());
 
     AccountPolicy::web4_setStaticUrl("ipfs://bafycid/".to_string());
-    assert_eq!(AccountPolicy::web4_get_static_url().as_deref(), Some("ipfs://bafycid/"));
-    let url = |path: &str| AccountPolicy::web4_get(Web4Request { path: path.to_string() }).body_url.unwrap();
+    assert_eq!(
+        AccountPolicy::web4_get_static_url().as_deref(),
+        Some("ipfs://bafycid/")
+    );
+    let url = |path: &str| {
+        AccountPolicy::web4_get(Web4Request {
+            path: path.to_string(),
+        })
+        .body_url
+        .unwrap()
+    };
     assert_eq!(url("/"), "ipfs://bafycid/index.html");
     assert_eq!(url("/docs"), "ipfs://bafycid/index.html");
-    assert_eq!(url("/assets/index-abc.js"), "ipfs://bafycid/assets/index-abc.js");
+    assert_eq!(
+        url("/assets/index-abc.js"),
+        "ipfs://bafycid/assets/index-abc.js"
+    );
     assert_eq!(url("/logo.png?v=2"), "ipfs://bafycid/logo.png");
     assert_eq!(url("/../secret.txt"), "ipfs://bafycid/index.html");
 }
@@ -2780,10 +2794,20 @@ fn web4_serves_the_app_from_its_static_url() {
 fn web4_responses_use_gateway_field_names() {
     let json = near_sdk::serde_json::to_value(web4_body_url("ipfs://x", "/a.js")).unwrap();
     assert_eq!(json, "ipfs://x/a.js");
-    let response = Web4Response { content_type: None, status: None, body: None, body_url: Some("ipfs://x/index.html".to_string()) };
-    assert_eq!(near_sdk::serde_json::to_string(&response).unwrap(), r#"{"bodyUrl":"ipfs://x/index.html"}"#);
-    let request: Web4Request =
-        near_sdk::serde_json::from_str(r#"{"accountId":null,"path":"/","params":{},"query":{},"preloads":{}}"#).unwrap();
+    let response = Web4Response {
+        content_type: None,
+        status: None,
+        body: None,
+        body_url: Some("ipfs://x/index.html".to_string()),
+    };
+    assert_eq!(
+        near_sdk::serde_json::to_string(&response).unwrap(),
+        r#"{"bodyUrl":"ipfs://x/index.html"}"#
+    );
+    let request: Web4Request = near_sdk::serde_json::from_str(
+        r#"{"accountId":null,"path":"/","params":{},"query":{},"preloads":{}}"#,
+    )
+    .unwrap();
     assert_eq!(request.path, "/");
 }
 

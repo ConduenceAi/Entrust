@@ -2411,7 +2411,9 @@ impl AccountPolicy {
             None => Web4Response {
                 content_type: Some("text/plain; charset=UTF-8".to_string()),
                 status: Some(404),
-                body: Some(Base64VecU8::from(b"No site is published on this account.".to_vec())),
+                body: Some(Base64VecU8::from(
+                    b"No site is published on this account.".to_vec(),
+                )),
                 body_url: None,
             },
         }
