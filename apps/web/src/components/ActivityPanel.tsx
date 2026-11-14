@@ -1,7 +1,8 @@
 import { useMemo, useState } from "react";
 import { RefreshCw } from "lucide-react";
-import { describeReason, formatUsdc, isX402 } from "@nearfirewall/sdk";
-import { policyOf } from "../config.ts";
+import { describeReason, formatUsdc, isX402, USDC_CONTRACT } from "@nearfirewall/sdk";
+import { config, explorerTx, policyOf } from "../config.ts";
+import { activityTransactions, type ActivityLookup } from "../activity-transactions.ts";
 import { useWorkspaceRegistry } from "../workspace-registry.tsx";
 import { near, timeText } from "../format.ts";
 import { useAsync } from "../hooks.ts";
@@ -20,6 +21,7 @@ interface Entry {
   kind: Kind;
   detail: string;
   connection?: string;
+  lookup: ActivityLookup;
 }
 
 const FILTERS: { id: "all" | Kind; label: string; tone: "lime" | "sky" | "coral" }[] = [
@@ -42,9 +44,17 @@ const POLICY_OUTCOMES = {
   expired: { kind: "blocked", detail: "Confirmation expired" },
 } as const;
 
+const POLICY_EVENTS = {
+  settled: "payment_settled",
+  denied: "payment_denied",
+  failed: "payment_failed",
+  awaiting: "payment_awaiting_confirmation",
+  declined: "payment_declined",
+  expired: "payment_declined",
+} as const;
+
 /**
- * Settled and blocked attempts, read from the bounded activity logs that both
- * contracts keep on chain. No indexer or backend is involved.
+ * Read activity from the contracts, then look up its transaction links separately.
  */
 export function ActivityPanel() {
   const { accountId } = useWallet();
@@ -74,12 +84,19 @@ export function ActivityPanel() {
       ...POLICY_OUTCOMES[p.outcome],
       detail: p.outcome === "denied" && p.reason ? describeReason(p.reason) : POLICY_OUTCOMES[p.outcome].detail,
       connection: p.via && p.via.kind !== "executor" ? [p.via.label, p.client].filter(Boolean).join(" · ") : undefined,
+      lookup: {
+        key: `p-${p.seq}`, contract: accountId, agentId: p.leaf, requestId: p.request_id,
+        at: p.at, event: POLICY_EVENTS[p.outcome],
+        ...(p.outcome === "settled" && p.via?.kind === "x402"
+          ? { payment: { account: p.via.payment_account, recipient: p.recipient, amount: p.amount, asset: USDC_CONTRACT[config.network] } }
+          : {}),
+      },
     }));
     for (const e of routed.flat()) {
       if (e.outcome !== "denied") continue;
       const x402 = e.action.type === "X402Pay";
       entries.push({
-        key: `r-${e.agent}-${e.seq}`,
+        key: `r-${e.agent_id}-${e.seq}`,
         at: e.at,
         agent: e.agent,
         recipient: e.action.type === "X402Pay" ? e.action.pay_to : e.action.recipient,
@@ -87,11 +104,19 @@ export function ActivityPanel() {
         x402,
         kind: "registry",
         detail: e.reason ? describeReason(e.reason) : "Blocked before reaching your account",
+        lookup: {
+          key: `r-${e.agent_id}-${e.seq}`, contract: registry.registryId, agentId: e.agent_id,
+          requestId: e.request_id, at: e.at, event: "execution_denied",
+        },
       });
     }
     return entries.sort((a, b) => (a.at < b.at ? 1 : a.at > b.at ? -1 : 0));
   }, [accountId, registry, policyCodeHash]);
 
+  const hashes = useAsync(async () => ({
+    rows: data.data,
+    transactions: accountId && data.data ? await activityTransactions(accountId, data.data.map((e) => e.lookup)) : null,
+  }), [accountId, data.data]);
   const all = data.data ?? [];
   const agentNames = useMemo(() => [...new Set(all.map((e) => e.agent))].sort(), [all]);
   const byAgent = all.filter((e) => agentFilter === "all" || e.agent === agentFilter);
@@ -135,7 +160,11 @@ export function ActivityPanel() {
         <p className="empty">{data.loading ? "Loading…" : all.length === 0 ? "Nothing has been attempted yet." : "No entries match these filters."}</p>
       ) : (
         <ul className="feed">
-          {shown.map((e) => (
+          {shown.map((e) => {
+            const links = hashes.data?.rows === data.data ? hashes.data?.transactions?.get(e.key) : undefined;
+            const hash = links?.settlement ?? links?.transaction;
+            const label = links?.settlement ? "Settlement hash" : e.x402 && e.kind === "paid" ? "Funding hash" : "Transaction hash";
+            return (
             <li key={e.key}>
               <span className={`dot ${DOT[e.kind]}`} aria-hidden="true" />
               <span className="title">
@@ -144,8 +173,17 @@ export function ActivityPanel() {
               <span className="amount">{e.x402 ? `${formatUsdc(e.amount)} USDC (x402)` : near(e.amount)}</span>
               <span className="sub">{e.kind === "registry" ? `Blocked by the registry: ${e.detail}` : e.detail}{e.connection && ` · ${e.connection}`}</span>
               <span className="when">{timeText(e.at)}</span>
+              <span className="sub">
+                {hash ? <a href={explorerTx(hash)} target="_blank" rel="noreferrer">{label}: <code>{hash}</code></a>
+                  : hashes.loading || hashes.data?.rows !== data.data ? "Looking up transaction…"
+                    : "Transaction hash unavailable"}
+                {links?.settlement && links.transaction && (
+                  <> · <a href={explorerTx(links.transaction)} target="_blank" rel="noreferrer">Funding hash: <code>{links.transaction}</code></a></>
+                )}
+              </span>
             </li>
-          ))}
+            );
+          })}
         </ul>
       )}
     </section>

@@ -147,7 +147,7 @@ export function Docs({ section }: { section?: string }) {
         </nav>
 
         <article className="doc" ref={articleRef}>
-          <h1>NEARFirewall documentation</h1>
+          <h1>Entrust documentation</h1>
           <p className="lead">Everything you need to let an agent pay from your NEAR account safely, from the first click to day-to-day control.</p>
 
           <div className="docs-search" role="search">
@@ -183,14 +183,14 @@ export function Docs({ section }: { section?: string }) {
           </div>
           <h2 id="overview">Overview</h2>
           <p>
-            NEARFirewall is a spending policy for AI agents. You keep your normal NEAR account. You register an agent, say who it may
+            Entrust is a spending policy for AI agents. You keep your normal NEAR account. You register an agent, say who it may
             pay and how much, and the agent can then make those payments on its own. Anything outside the rules is refused before any
             money moves, and every attempt is recorded.
           </p>
           <p>There are three pieces, and you only ever use the first one:</p>
           <ul>
             <li>
-              <strong>The NEARFirewall app</strong> (this site). You use it to register agents, enable payments, set limits, pause, and
+              <strong>The Entrust app</strong> (this site). You use it to register agents, enable payments, set limits, pause, and
               read the activity.
             </li>
             <li>
@@ -273,7 +273,7 @@ export function Docs({ section }: { section?: string }) {
 
           <h2 id="how-it-works">How it works</h2>
           <p>
-            NEARFirewall is three pieces working together. Your wallet sets things up. At payment time the agent can only <em>ask</em>, and
+            Entrust is three pieces working together. Your wallet sets things up. At payment time the agent can only <em>ask</em>, and
             the decision is made on the blockchain by contracts that check your rules before any NEAR moves.
           </p>
 
@@ -590,19 +590,19 @@ get_records({ agent_id })             // its public records`}</code>
 npm run runner -- apps/runner/scenarios/tree-1-leaf-pays.json`}</pre>
           <p>
             A production agent uses the SDK's executor client with the same restricted key. The key is read from the environment and never
-            printed or stored by NEARFirewall.
+            printed or stored by Entrust.
           </p>
 
           <h2 id="integrations">Connect your AI agent</h2>
           <p>
-            NEARFirewall does not run your agent. Your agent runs wherever you build it, and it uses a key that can only <em>ask</em> for a
+            Entrust does not run your agent. Your agent runs wherever you build it, and it uses a key that can only <em>ask</em> for a
             payment. Your account's rules decide, on-chain, whether the payment happens. So the same protection applies whichever platform
             the agent runs on.
           </p>
           <Callout kind="warn">
             <p>
               Never give an agent your wallet's seed phrase or private key. A wallet's main key can do anything, including removing your
-              rules. Give the agent only the restricted key NEARFirewall sets up for it.
+              rules. Give the agent only the restricted key Entrust sets up for it.
             </p>
           </Callout>
 
@@ -623,7 +623,7 @@ npm run runner -- apps/runner/scenarios/tree-1-leaf-pays.json`}</pre>
             server, or an agent framework. Keep the key in an environment variable or secret store, never in a prompt.
           </p>
           <p>
-            <strong>TypeScript (Node.js 24)</strong>, with the NEARFirewall SDK:
+            <strong>TypeScript (Node.js 24)</strong>, with the Entrust SDK:
           </p>
           <pre>{`import { Account } from "near-api-js";
 import {
@@ -766,7 +766,8 @@ console.log(result.operation.state, result.operation.reason ?? "");`}</pre>
           <h2 id="activity">Reading activity</h2>
           <p>
             <strong>Activity</strong> shows one feed with everything that was attempted. It is read straight from bounded logs kept by
-            the contracts, so it needs no indexer and only keeps recent entries.
+            the contracts, which keep recent entries. The feed looks up transaction links in NearBlocks. For x402, the settlement
+            hash opens the transfer to the seller, and the funding hash opens the wallet's funding transaction.
           </p>
           <ul>
             <li>
@@ -809,7 +810,7 @@ console.log(result.operation.state, result.operation.reason ?? "");`}</pre>
             <li>A leaked key can request payments within your rules and consume its gas allowance. Pause the agent or disconnect its key to stop new requests.</li>
             <li>Simultaneous requests are checked against the same running totals, so they cannot all slip under a cap together.</li>
             <li>A payment that fails after being reserved releases the reservation and is logged as failed.</li>
-            <li>Your funds stay on your account. NEARFirewall never takes custody.</li>
+            <li>Your funds stay on your account. Entrust never takes custody.</li>
           </ul>
           <Callout kind="note">
             <p>This is a hackathon build on NEAR Testnet. Do not use it with real funds until it has been audited.</p>

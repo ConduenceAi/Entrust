@@ -20,6 +20,7 @@ export interface FtTransferDelegate {
   asset: string;
   payTo: string;
   amount: bigint;
+  memo?: string;
   /** Must be above the access key's current nonce. */
   nonce: bigint;
   /** The last block in which the delegate may be relayed. */
@@ -33,7 +34,11 @@ export async function signFtTransferDelegate(input: FtTransferDelegate): Promise
     senderId: input.senderId,
     receiverId: input.asset,
     actions: [
-      actions.functionCall("ft_transfer", { receiver_id: input.payTo, amount: input.amount.toString() }, FT_TRANSFER_GAS, 1n),
+      actions.functionCall("ft_transfer", {
+        receiver_id: input.payTo,
+        amount: input.amount.toString(),
+        ...(input.memo ? { memo: input.memo } : {}),
+      }, FT_TRANSFER_GAS, 1n),
     ],
     nonce: input.nonce,
     maxBlockHeight: input.maxBlockHeight,

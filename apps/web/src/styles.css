@@ -137,7 +137,7 @@ label.check { flex-direction: row; align-items: center; gap: 8px; }
   font-family: var(--mono);
   font-size: 0.78rem;
 }
-.wallet-account i, .hero-network i {
+.wallet-account i {
   display: inline-block;
   width: 6px;
   height: 6px;
@@ -198,8 +198,6 @@ label.check { flex-direction: row; align-items: center; gap: 8px; }
   font-size: 0.82rem;
   font-weight: 600;
 }
-.hero-eyebrow { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 14px; color: var(--hero-accent); font: 0.69rem var(--mono); letter-spacing: 0.125em; text-transform: uppercase; }
-.hero-network { white-space: nowrap; }
 .hero h1, .gate h1 { font-size: clamp(3.25rem, 6.4vw, 6.7rem); letter-spacing: -0.06em; font-weight: 600; line-height: 0.99; margin-top: 18px; }
 .hero h1 { font-family: "Geist", system-ui, sans-serif; }
 .hero h1 span { color: var(--hero-accent); }
@@ -216,14 +214,6 @@ label.check { flex-direction: row; align-items: center; gap: 8px; }
   font-weight: 600;
 }
 .text-link:hover { text-decoration: underline; text-underline-offset: 4px; }
-.hero-guide {
-  position: absolute;
-  bottom: 25px;
-  left: var(--gutter);
-  color: var(--hero-muted);
-  font-weight: 500;
-  font-size: 0.8rem;
-}
 .hero :focus-visible, .gate :focus-visible { outline-color: var(--hero-info); }
 .preview {
   width: min(100%, 385px);
@@ -612,7 +602,6 @@ ul.tree ul.tree { padding-left: clamp(8px, 1.8vw, 20px); margin-left: 6px; borde
   .header-launch { padding-inline: 9px; }
   .wallet-account { max-width: min(28vw, 18ch); }
   .hero-inner { grid-template-columns: minmax(0, 1fr); min-height: 0; padding-top: 58px; padding-bottom: 54px; gap: 32px; }
-  .hero-guide { display: none; }
   .preview { justify-self: start; margin: 0; }
   .setup, .docs-wrap, .register-form fieldset { grid-template-columns: minmax(0, 1fr); }
   .section-intro { text-align: left; }

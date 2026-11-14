@@ -126,7 +126,7 @@ function buildSteps(accountId: string, p: Progress | undefined, { mode, registry
       id: "enable",
       title: "Enable payments on your account",
       todo: p?.otherContract
-        ? "This account already runs a different contract, so NEARFirewall will not install its policy here. Connect an account without a contract."
+        ? "This account already runs a different contract, so Entrust will not install its policy here. Connect an account without a contract."
         : "Choose Enable payments. Your wallet asks you to sign one transaction to your own account.",
       why: "The policy on your account checks each request against your rules. A direct deployment reserves part of your balance for contract storage.",
       action: p?.otherContract ? undefined : { label: "Enable payments", path: "/app/payments", target: "enable-payments" },

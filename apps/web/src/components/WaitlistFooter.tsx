@@ -98,7 +98,7 @@ export function WaitlistFooter() {
       </div>
       <div className="waitlist-footer-bar">
         <Brand />
-        <div><span>© 2026 NEARFirewall</span><a href={href("/docs")}>Docs</a><button type="button" className="text-link footer-waitlist-link" aria-haspopup="dialog" onClick={openList}>View waitlist</button></div>
+        <div><span>© 2026 Entrust</span><a href={href("/docs")}>Docs</a><button type="button" className="text-link footer-waitlist-link" aria-haspopup="dialog" onClick={openList}>View waitlist</button></div>
       </div>
       <dialog ref={signup} className="waitlist-dialog waitlist-drawer" aria-labelledby="waitlist-join-title">
         <header>

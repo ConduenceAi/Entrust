@@ -195,14 +195,14 @@ function ConnectionSetup({ accountId, secretKey, platform, onDone }: { accountId
       <h3>Set up {platform.name}</h3>
       {claudeCode ? (
         <ol>
-          <li>Install Node.js 24+ and run <code>npm ci</code> in the NEARFirewall checkout.</li>
+          <li>Install Node.js 24+ and run <code>npm ci</code> in the project checkout.</li>
           <li>Copy the command below and run it once in a terminal. It adds this agent to Claude Code for your user. It contains the key, so clear it from your shell history afterwards.</li>
           {!config.mcpServerPath && <li>Before running it, replace the placeholder with the absolute path to <code>packages/mcp/src/main.ts</code>.</li>}
           <li>Start Claude Code, check the connection with <code>/mcp</code>, then ask: What can you spend?</li>
         </ol>
       ) : (
         <ol>
-          <li>Install Node.js 24+ and run <code>npm ci</code> in the NEARFirewall checkout.</li>
+          <li>Install Node.js 24+ and run <code>npm ci</code> in the project checkout.</li>
           <li>{platform.setup}</li>
           {!config.mcpServerPath && <li>Replace the placeholder with the absolute path to <code>packages/mcp/src/main.ts</code>. If your client cannot find Node.js, use the absolute path to its executable.</li>}
           <li>Call <code>get_rules</code> to verify the connection before requesting a payment.</li>

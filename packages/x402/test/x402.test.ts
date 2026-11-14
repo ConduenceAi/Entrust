@@ -365,6 +365,11 @@ describe("createPaywall", () => {
     expect(result.status).toBe("paid");
     expect(funded).toEqual([{ asset: USDC, payTo: SELLER, amount: PRICE }]);
     expect(relayed?.delegateAction.senderId).toBe(key.account);
-    expect(argsOf(relayed!.delegateAction.actions[0]!.functionCall!.args)).toEqual({ receiver_id: SELLER, amount: PRICE.toString() });
+    if (result.status !== "paid") throw new Error("Expected a settled payment");
+    expect(argsOf(relayed!.delegateAction.actions[0]!.functionCall!.args)).toEqual({
+      receiver_id: SELLER,
+      amount: PRICE.toString(),
+      memo: `x402:${result.payment.requestId}`,
+    });
   });
 });

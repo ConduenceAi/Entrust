@@ -98,7 +98,7 @@ export function RegistrySetup({ registryId, state, onCreated }: { registryId: st
         <>
           <h2 id="registry-setup-title">Create your registry</h2>
           {state.kind === "untrusted" ? (
-            <p className="notice error">{state.reason} NEARFirewall will not use it. Use a different wallet account.</p>
+            <p className="notice error">{state.reason} Entrust will not use it. Use a different wallet account.</p>
           ) : (
             <>
               <p>

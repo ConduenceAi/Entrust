@@ -99,7 +99,7 @@ function EnableCard({ accountId, busy, exec, run }: { accountId: string; busy: b
     <div className="card" id="enable-payments">
       <h3>Enable agent payments on your account</h3>
       <p>
-        This installs the NEARFirewall payment policy on <strong>{accountId}</strong> and connects it to the registry
+        This installs the Entrust payment policy on <strong>{accountId}</strong> and connects it to the registry
         <code> {registryId}</code>. Agents can then pay only the recipients
         you approve, within the limits you set. You keep full control of your account.
       </p>
@@ -129,7 +129,7 @@ function EnableCard({ accountId, busy, exec, run }: { accountId: string; busy: b
 }
 
 /**
- * The account runs code the app does not expect. If it is an older NEARFirewall
+ * The account runs code the app does not expect. If it is an older Entrust
  * policy, offer to upgrade it in place: rules, agents, and history are kept.
  */
 function OtherContract({ accountId, codeHash, busy, exec, run }: { accountId: string; codeHash: string; busy: boolean; exec: Execute; run: Run }) {
@@ -142,7 +142,7 @@ function OtherContract({ accountId, codeHash, busy, exec, run }: { accountId: st
   if (!ours.data) {
     return (
       <p className="notice error">
-        This account already runs a different contract (code hash {codeHash}). NEARFirewall will not replace it. Use an account without a contract.
+        This account already runs a different contract (code hash {codeHash}). Entrust will not replace it. Use an account without a contract.
       </p>
     );
   }

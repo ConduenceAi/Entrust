@@ -221,7 +221,7 @@ function AccountDetails({ data, busy, exec }: { data: MapData; busy: boolean; ex
     gaps.push({ level: "block", text: "Payments are not enabled, so no agent can pay from this account.", action: { label: "Enable payments", path: "/app/payments" } });
   }
   if (data.state.kind === "other") {
-    gaps.push({ level: "block", text: "This account runs a different contract. NEARFirewall will not install its policy here." });
+    gaps.push({ level: "block", text: "This account runs a different contract. Entrust will not install its policy here." });
   }
   if (p?.paused) gaps.push({ level: "block", text: "All agent payments are paused.", action: { label: "Payments", path: "/app/payments" } });
   if (data.agents.length === 0) gaps.push({ level: "warn", text: "You hold no agents yet.", action: { label: "Register an agent", path: "/app/agents" } });

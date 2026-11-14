@@ -12,7 +12,7 @@ function newToken() {
  * Setup for cloud platforms. They cannot start a program on your computer, so
  * they reach the agent through a gateway you host: one small service that holds
  * this connection key and is protected by a token generated here, in the browser.
- * NEARFirewall never sees either secret.
+ * Entrust never sees either secret.
  */
 export function GatewaySetup({ accountId, secretKey, platform, onDone }: { accountId: string; secretKey: string; platform: AgentPlatform; onDone(): void }) {
   const recipe = platform.gateway!;
@@ -84,7 +84,7 @@ export function GatewaySetup({ accountId, secretKey, platform, onDone }: { accou
         <button type="button" onClick={() => void copy(env, "Settings")}>Copy settings</button>
         <button type="button" onClick={download}>Download .env</button>
       </div>
-      <p>From the NEARFirewall folder, with Docker:</p>
+      <p>From the project folder, with Docker:</p>
       <pre><code>{`docker build -f apps/gateway/Dockerfile -t nearfirewall-gateway .
 docker run -d --restart unless-stopped -p 8787:8787 --env-file nearfirewall-gateway.env nearfirewall-gateway`}</code></pre>
       <p className="hint">Or without Docker (Node.js 24): set the same settings in the environment and run <code>node apps/gateway/src/main.ts</code>.</p>

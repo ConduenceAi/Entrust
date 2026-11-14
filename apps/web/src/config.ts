@@ -3,9 +3,12 @@ import { NETWORKS, NearRpc, PolicyClient } from "@nearfirewall/sdk";
 const env = import.meta.env;
 const network = (env.VITE_NETWORK ?? "testnet") as "testnet" | "mainnet";
 
+/** The public waitlist contract on Testnet, so local and hosted builds share one waitlist without extra setup. */
+const TESTNET_WAITLIST_CONTRACT_ID = "waitlist.entrust.testnet";
+
 export const config = {
   network,
-  waitlistContractId: (env.VITE_WAITLIST_CONTRACT_ID ?? "").trim(),
+  waitlistContractId: (env.VITE_WAITLIST_CONTRACT_ID ?? (network === "testnet" ? TESTNET_WAITLIST_CONTRACT_ID : "")).trim(),
   rpcUrl: env.VITE_RPC_URL ?? NETWORKS[network],
   /**
    * "per-user" (default): each owner has their own registry on agents.<account>.

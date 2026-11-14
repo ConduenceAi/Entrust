@@ -23,7 +23,7 @@ export function ConnectedPayment() {
 export function SystemOverview() {
   return (
     <Diagram
-      title="The parts of NEARFirewall"
+      title="The parts of Entrust"
       desc="You manage agents in the registry and set rules on your own account. The agent's executor asks the registry to pay. The registry forwards the request to your account, whose policy pays an approved recipient or refuses."
       width={400}
       height={300}

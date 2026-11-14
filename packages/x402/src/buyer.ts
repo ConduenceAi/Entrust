@@ -239,7 +239,7 @@ export class X402Buyer {
       };
     }
 
-    const signedDelegateAction = await this.signFor(requirement, amount);
+    const signedDelegateAction = await this.signFor(requirement, amount, requestId);
     const body = { x402Version: X402_VERSION, resource: required.value.resource, accepted: choice.raw, payload: { signedDelegateAction } };
     const second = await transport({ url, headers: { "PAYMENT-SIGNATURE": encodeHeader(body) } });
     const settlement = readSettlement(second);
@@ -257,7 +257,7 @@ export class X402Buyer {
   }
 
   /** Signs the seller's transfer from the payment account, valid for the seller's timeout. */
-  private async signFor(requirement: PaymentRequirements, amount: bigint): Promise<string> {
+  private async signFor(requirement: PaymentRequirements, amount: bigint, requestId: string): Promise<string> {
     const block = await this.rpc.call<{ header: { height: number } }>("block", { finality: "final" });
     const key = await this.rpc.call<{ nonce: number | string }>("query", {
       request_type: "view_access_key",
@@ -272,6 +272,7 @@ export class X402Buyer {
       asset: requirement.asset,
       payTo: requirement.payTo,
       amount,
+      memo: `x402:${requestId}`,
       nonce: BigInt(key.nonce) + 1n,
       maxBlockHeight: BigInt(block.header.height) + timeoutBlocks,
     });

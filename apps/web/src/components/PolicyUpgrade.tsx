@@ -32,7 +32,7 @@ export function PolicyUpgrade({ accountId, features, busy, exec, run }: { accoun
     <div className="card">
       <h3>Upgrade your payment policy</h3>
       <p>
-        <strong>{accountId}</strong> runs an older NEARFirewall policy. Upgrading keeps your approvals, connections, and activity. It adds the
+        <strong>{accountId}</strong> runs an older Entrust policy. Upgrading keeps your approvals, connections, and activity. It adds the
         current features, such as x402 payments in USDC.
       </p>
       <div className="actions">

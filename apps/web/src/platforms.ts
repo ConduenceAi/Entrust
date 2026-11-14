@@ -23,7 +23,7 @@ export const platforms: AgentPlatform[] = [
     id: "chatgpt", name: "ChatGPT", type: "Chat assistants", initials: "CG", aliases: "openai remote mcp gateway",
     gateway: { kind: "mcp", steps: [
       "Open ChatGPT settings and find Connectors (turn on developer mode under advanced settings if you cannot create a custom connector).",
-      "Create a connector named NEARFirewall and paste the MCP server URL below. The secret is already in the URL, so choose no authentication.",
+      "Create a connector named Entrust and paste the MCP server URL below. The secret is already in the URL, so choose no authentication.",
       "Enable the connector in a chat, then ask: What can you spend?",
       MENU_NOTE,
     ] },
@@ -44,7 +44,7 @@ export const platforms: AgentPlatform[] = [
     id: "claude-web", name: "Claude on the web", type: "Chat assistants", initials: "CW", aliases: "anthropic claude.ai remote mcp gateway",
     gateway: { kind: "mcp", steps: [
       "Open Claude settings, then Connectors, then add a custom connector.",
-      "Name it NEARFirewall and paste the MCP server URL below. The secret is already in the URL.",
+      "Name it Entrust and paste the MCP server URL below. The secret is already in the URL.",
       "Turn the connector on in a chat, then ask: What can you spend?",
       MENU_NOTE,
     ] },

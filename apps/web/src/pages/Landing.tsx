@@ -1,9 +1,8 @@
-import { ArrowDown, ArrowRight, Code2, KeyRound, Users, Wallet } from "lucide-react";
+import { ArrowRight, Code2, KeyRound, Users, Wallet } from "lucide-react";
 import { PaymentFeatureCards } from "../components/PaymentFeatureCards.tsx";
 import { PaymentDemo } from "../components/PaymentDemo.tsx";
 import { PaymentPolicyPreview } from "../components/PaymentPolicyPreview.tsx";
 import { WalletEntry } from "../components/WalletEntry.tsx";
-import { config } from "../config.ts";
 import { Brand } from "../components/Brand.tsx";
 import { WaitlistFooter } from "../components/WaitlistFooter.tsx";
 import { href } from "../router.ts";
@@ -23,12 +22,8 @@ export function Landing() {
           </header>
           <div className="hero-inner">
             <div className="hero-copy">
-              <div className="hero-eyebrow">
-                <span>On-chain spending controls</span>
-                <span className="hero-network"><i aria-hidden="true" />{config.network}</span>
-              </div>
               <h1 id="hero-title">Let agents pay.<br /><span>Keep the keys.</span></h1>
-              <p className="lead">Give agents a budget from your existing NEAR account. You choose who they can pay and how much. NEARFirewall enforces the rules on-chain.</p>
+              <p className="lead">Give agents a budget from your existing NEAR account. You choose who they can pay and how much.</p>
               <div className="cta-row">
                 <WalletEntry placement="landing" />
                 <a className="text-link" href={href("/docs")}>Read the docs <ArrowRight size={15} /></a>
@@ -36,8 +31,6 @@ export function Landing() {
             </div>
 
             <PaymentPolicyPreview />
-
-            <a className="hero-guide text-link" href="#payment-walkthrough"><ArrowDown size={15} /> Try it here</a>
           </div>
           <div className="landing-compatible" aria-label="Compatible with these local MCP clients">
             <span>Works with</span>
@@ -61,7 +54,7 @@ export function Landing() {
           <ol className="problem-strip" aria-label="Three ways to let agents pay">
             <li data-tone="bad"><strong>The owner signs everything</strong><span>Every team waits on one person.</span></li>
             <li data-tone="bad"><strong>The agent holds the wallet key</strong><span>One bad prompt can spend it all.</span></li>
-            <li data-tone="good"><strong>NEARFirewall</strong><span>Agents pay within your rules. The chain enforces them.</span></li>
+            <li data-tone="good"><strong>Entrust</strong><span>Agents pay within your rules. The chain enforces them.</span></li>
           </ol>
           <figure className="company-map" aria-label="One company wallet delegates payments to two departments">
               <div className="company-wallet">
