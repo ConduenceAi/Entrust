@@ -4,10 +4,15 @@
   "registry": "nfw-registry-1112.testnet",
   "registryCodeHash": "Hgkuzff54ttMpomBhTGKBjSqgJVeRYeNv1ADfkVU8qwC",
   "policy": {
-    "codeHash": "BYswoXdW6iiULfmEjUJvb6QpE4PzeC5SphEYvRzbAgPX",
+    "codeHash": "HS5mewiKRbq2skcE6J8q6Jv5wmviRqCxTtRtzci9C2DZ",
     "globalCodeHash": null,
     "wasm": "apps/web/public/nearfirewall_account_policy.wasm"
   },
   "abiVersion": "1.0.0",
-  "sourceRevision": "0e40a5d plus uncommitted changes (built 2026-11-12 with cargo-near 0.23.0, --no-abi)"
+  "sourceRevision": "481f53e plus the web4 policy methods (built 2026-11-15 with cargo-near 0.23.0, --no-abi)",
+  "web4": {
+    "account": "entrust.testnet",
+    "url": "https://entrust.testnet.page",
+    "staticUrl": "ipfs://bafybeidh4to6sytj4posddbcuwcc6halmqwvfngs5bpgvyed2nunzuvzge"
+  }
 }

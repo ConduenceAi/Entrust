@@ -116,6 +116,46 @@ enum StorageKey {
     X402Config,
     X402Rules,
     X402Charges,
+    // The web4 site's static URL, also outside the contract struct.
+    Web4StaticUrl,
+}
+
+/// The part of a web4 gateway request this contract reads. The gateway also
+/// sends `accountId`, `params`, `query` and `preloads`, which are ignored.
+#[near(serializers = [json])]
+pub struct Web4Request {
+    pub path: String,
+}
+
+/// A web4 response: the gateway serves `body`, or fetches `bodyUrl` and serves that.
+#[near(serializers = [json])]
+#[serde(rename_all = "camelCase")]
+pub struct Web4Response {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub content_type: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub status: Option<u32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub body: Option<Base64VecU8>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub body_url: Option<String>,
+}
+
+/// Longest accepted web4 static URL, such as `ipfs://<cid>`.
+pub const MAX_WEB4_URL_BYTES: usize = 512;
+
+/// Where a web4 request path is served from under the static URL. The app
+/// routes with the URL hash, so any path that does not name a file gets the
+/// app's `index.html`.
+pub fn web4_body_url(static_url: &str, path: &str) -> String {
+    let base = static_url.trim_end_matches('/');
+    let path = path.split(['?', '#']).next().unwrap_or("");
+    let last = path.rsplit('/').next().unwrap_or("");
+    if last.contains('.') && !path.contains("..") {
+        format!("{base}{path}")
+    } else {
+        format!("{base}/index.html")
+    }
 }
 
 fn prefixed_key(prefix: StorageKey, id: &str) -> Vec<u8> {
@@ -2356,9 +2396,50 @@ impl AccountPolicy {
         })
     }
 
+    // ---------------------------------------------------------------- web4
+
+    /// Serves `<account>.near.page` (or `.testnet.page`) through the web4
+    /// gateway. Static: it reads only the stored site URL, never the policy.
+    pub fn web4_get(request: Web4Request) -> Web4Response {
+        match read_stored::<String>(&StorageKey::Web4StaticUrl.into_storage_key()) {
+            Some(url) => Web4Response {
+                content_type: None,
+                status: None,
+                body: None,
+                body_url: Some(web4_body_url(&url, &request.path)),
+            },
+            None => Web4Response {
+                content_type: Some("text/plain; charset=UTF-8".to_string()),
+                status: Some(404),
+                body: Some(Base64VecU8::from(b"No site is published on this account.".to_vec())),
+                body_url: None,
+            },
+        }
+    }
+
+    /// Sets the web4 site's files, such as `ipfs://<cid>` from `web4-deploy`.
+    /// Only the account itself can call it. Function-call keys on this account
+    /// are limited to other methods, so in practice this means a full-access key.
+    #[allow(non_snake_case)]
+    pub fn web4_setStaticUrl(url: String) {
+        require!(
+            env::predecessor_account_id() == env::current_account_id(),
+            "Only the account itself can set its site"
+        );
+        require!(
+            !url.is_empty() && url.len() <= MAX_WEB4_URL_BYTES,
+            "The site URL must be 1 to 512 bytes"
+        );
+        write_stored(&StorageKey::Web4StaticUrl.into_storage_key(), &url);
+    }
+
+    pub fn web4_get_static_url() -> Option<String> {
+        read_stored(&StorageKey::Web4StaticUrl.into_storage_key())
+    }
+
     /// What this version of the policy supports, so apps can offer the right actions.
     pub fn get_features(&self) -> Vec<String> {
-        ["x402", "x402_sites", "x402_agents", "upgrade_code"]
+        ["x402", "x402_sites", "x402_agents", "upgrade_code", "web4"]
             .map(String::from)
             .to_vec()
     }

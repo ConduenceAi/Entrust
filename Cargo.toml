@@ -5,7 +5,7 @@ members = ["contracts/types", "contracts/registry", "contracts/account-policy", 
 [workspace.package]
 version = "0.1.0"
 edition = "2021"
-repository = "https://github.com/ConduenceAi/NEARFirewall"
+repository = "https://github.com/ConduenceAi/Entrust"
 
 [workspace.dependencies]
 near-sdk = "5.30.1"

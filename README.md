@@ -10,9 +10,9 @@ Built for [NEAR HACKATHON](https://nearhackathon.com/#tracks).
 
 | Demo links | URL |
 | --- | --- |
-| Hosted dashboard | [Open Entrust](https://nearfirewall-nu.vercel.app/) |
+| Hosted dashboard, served on-chain from `entrust.testnet` | [entrust.testnet.page](https://entrust.testnet.page) |
 | Public Testnet agent registry | [`agents.entrust.testnet` on NearBlocks](https://testnet.nearblocks.io/address/agents.entrust.testnet) |
-| Public demo post on X | |
+| Public demo post on X | [x.com/anjali75619](https://x.com/anjali75619/status/2121720307706900937) |
 
 <p align="center">
   <img src="docs/assets/flow.svg" alt="An agent such as Claude Code asks with a restricted key. The registry checks the agent, the policy on your account checks the payee and budgets, and the payment is paid, waits for the owner, or is refused on-chain." width="100%">
@@ -90,6 +90,19 @@ Wallets that refuse contract deployments (Meteor, for one) can use **Use a one-t
 ### Deploy to Vercel
 
 Import the repository with Root Directory `./`; [`vercel.json`](vercel.json) serves the dashboard at `/` and the gateway at `/api`, `/mcp`, and `/health`. Set `NEARFIREWALL_ACCOUNT`, `NEARFIREWALL_AGENT_KEY`, `GATEWAY_TOKEN` (32+ characters), and `PORT=8787`, plus `NEARFIREWALL_NETWORK` for mainnet. For fresh-account setup, add the contract WASM URLs or code hashes from [`apps/web/.env.example`](apps/web/.env.example).
+
+### Host the dashboard on-chain
+
+The policy contract also answers web4 requests, so the owner's account serves the dashboard at `<account>.testnet.page`; the gateway stays on Vercel. Upgrade the policy to the local build, which keeps every rule and connection, then upload the built app to NEARFS and point the account at it:
+
+```bash
+npm run contracts:build
+node scripts/upgrade-policy.ts <you>.testnet
+VITE_POLICY_CODE_HASH=<new policy hash> VITE_MCP_SERVER_PATH= npm run web:build
+npx web4-deploy apps/web/dist <you>.testnet --nearfs
+```
+
+Only one-level names get a certificate, so use a top-level account such as `entrust.testnet`, not a sub-account.
 
 ## How it works
 
