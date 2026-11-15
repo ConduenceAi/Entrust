@@ -101,23 +101,6 @@ Wallets that refuse contract deployments (Meteor, for one) can use **Use a one-t
 
 `npm test -- packages/x402` runs the buyer, paywall, and facilitator against mocked chain reads. `node scripts/x402-demo.ts setup` prepares two Testnet owners. x402 is verified locally and has not yet run on Testnet.
 
-### Deploy to Vercel
-
-Import the repository with Root Directory `./`; [`vercel.json`](vercel.json) serves the dashboard at `/` and the gateway at `/api`, `/mcp`, and `/health`. Set `NEARFIREWALL_ACCOUNT`, `NEARFIREWALL_AGENT_KEY`, `GATEWAY_TOKEN` (32+ characters), and `PORT=8787`, plus `NEARFIREWALL_NETWORK` for mainnet. For fresh-account setup, add the contract WASM URLs or code hashes from [`apps/web/.env.example`](apps/web/.env.example).
-
-### Host the dashboard on-chain
-
-The policy contract also answers web4 requests, so the owner's account serves the dashboard at `<account>.testnet.page`; the gateway stays on Vercel. Upgrade the policy to the local build, which keeps every rule and connection, then upload the built app to NEARFS and point the account at it:
-
-```bash
-npm run contracts:build
-node scripts/upgrade-policy.ts <you>.testnet
-VITE_POLICY_CODE_HASH=<new policy hash> VITE_MCP_SERVER_PATH= npm run web:build
-npx web4-deploy apps/web/dist <you>.testnet --nearfs
-```
-
-Only one-level names get a certificate, so use a top-level account such as `entrust.testnet`, not a sub-account.
-
 ## How it works
 
 1. **Register.** The owner's registry mints the agent NFT and stores its capabilities and ancestry.
