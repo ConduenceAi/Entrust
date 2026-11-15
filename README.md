@@ -18,6 +18,20 @@ Built for [NEAR HACKATHON](https://nearhackathon.com/#tracks).
   <img src="docs/assets/flow.svg" alt="An agent such as Claude Code asks with a restricted key. The registry checks the agent, the policy on your account checks the payee and budgets, and the payment is paid, waits for the owner, or is refused on-chain." width="100%">
 </p>
 
+## Why
+
+AI agents now spend real money. They buy APIs, pay vendors, and hire other agents. But nothing stands between an agent's decision and your funds:
+
+- **Access is all or nothing.** An agent either holds a key that can move everything, or it cannot pay at all.
+- **Budgets don't follow the org.** A team cannot hand an agent just its slice of the budget.
+- **Agents are anonymous.** When agents pay each other, they are bare addresses, so you cannot tell who is on the other end.
+
+Entrust is a safeguard layer around your agents, on the NEAR account you already have. You control who can operate your agent and what your agent can access.
+
+- **Every decision gets checked.** The agent's key can only ask. Your rules on-chain decide whether to pay, hold the payment for you, or refuse it before money moves.
+- **Delegation follows your org.** Agents under a team lead can only narrow the lead's limits, and they share one budget. Pause the lead, and the whole branch stops.
+- **Every agent has a name.** Each agent is an NFT identity. When you pay an agent by name, Entrust checks on-chain that it is really that agent, still with the same owner.
+
 ## Hackathon tracks
 
 | Track | What Entrust demonstrates |
