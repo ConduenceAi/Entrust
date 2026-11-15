@@ -32,6 +32,61 @@ Entrust is a safeguard layer around your agents, on the NEAR account you already
 - **Delegation follows your org.** Agents under a team lead can only narrow the lead's limits, and they share one budget. Pause the lead, and the whole branch stops.
 - **Every agent has a name.** Each agent is an NFT identity. When you pay an agent by name, Entrust checks on-chain that it is really that agent, still with the same owner.
 
+## Features
+
+### Agent NFTs
+
+Every agent is a NEP-171 NFT minted in the owner's own registry (`agents.<you>.testnet`), with a readable name such as `trading.agents.entrust.testnet`. The token records who owns the agent and never holds funds. Its record stores what the agent may request (a per-payment cap for NEAR and one for x402), an optional expiry, its place in the agent tree, and up to 64 key-value records such as a description or subscription renewal dates.
+
+Transferring the token advances the agent's generation. Spending approvals are bound to that generation, so a new holder starts with no spending authority until the payer approves again. Two one-way locks can be burned on an agent: no transfer, and no raising its capabilities.
+
+### Hierarchy and ownership
+
+Agents form a tree up to 8 levels deep, such as company, then engineering, then a trading agent, and a child's name extends its parent's. The holder of an agent, or of any agent above it, can manage it: create children, change capabilities, set expiry, pause, resume, or remove it.
+
+A child can be transferred to a team lead, who then runs that branch, while the holders above keep authority over it. Pausing an agent stops it and every agent below it. Only a holder at or above the pausing level can resume, so a team lead cannot undo a pause set from above.
+
+### Delegation
+
+An agent acts in one of two ways:
+
+- **Connection key.** A function-call key on the owner's account that can only call `agent_execute`, with zero deposit, mapped to one agent. This is how Claude Code or Claude Desktop connects through the MCP server.
+- **Executor account.** A separate account allowed to call the registry's `execute` for the agent. It must differ from the holder, and changing it advances the generation.
+
+Children can only narrow what they inherit: their per-payment caps, x402 cap, and expiry can never exceed their parent's. A payment must fit every spending approval on the agent's path, and the whole branch draws from one daily pool. The owner can disconnect a key or revoke an approval at any time.
+
+### Vendors
+
+The owner approves recipients for each agent branch, each with its own per-payment cap, daily cap, optional expiry, and "ask me first" threshold. Payments to an approved recipient settle with no owner signature. A request to anyone else is refused with `RECIPIENT_NOT_APPROVED` and succeeds once the owner approves that recipient.
+
+An account-wide blocklist overrides every approval. Guardian keys can add recipients to it, but can never unblock, approve, or raise a limit.
+
+### Limits
+
+Every check must pass before money moves:
+
+| Layer | What it limits |
+| --- | --- |
+| Agent NFT | The largest single payment the agent may request |
+| Recipient | Per-payment and daily caps for one vendor, with an optional expiry |
+| Branch | One daily pool shared by the agent and everything below it, with an optional expiry |
+| Account | A daily cap across all agents, and a safety buffer (0.5 NEAR by default) that payments never touch |
+| Confirmation | Payments above the "ask me first" threshold wait for the owner. The amount is reserved meanwhile and released if declined |
+| Pause | Stop all payments from the account, or one agent's branch |
+
+Daily limits reset each UTC day.
+
+### x402 payments
+
+x402 lets an API charge per request. Entrust pays in USDC from a small payment account tied to the agent's key, which the owner's policy funds with the exact price only after its checks pass. Each branch gets x402 rules, matched in this order:
+
+1. **Approved agents**, by `<agent_id>@<registry>`. The account being paid must hold that agent NFT when the policy checks, and the owner can require that it has not changed hands since approval.
+2. **Approved seller accounts**, each with its own caps.
+3. **Approved websites**, by host, optionally pinned to the one account they may ask to be paid at.
+4. **Unlisted sellers**, sharing one small daily pool, or refused entirely.
+
+Leftover USDC goes back to the owner with `return_unspent_usdc`. x402 is verified locally and has not yet run on Testnet; see [x402 API payments](#x402-api-payments) to try it.
+
 ## Hackathon tracks
 
 | Track | What Entrust demonstrates |
